@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, make_response, request
 from bd import Carros
 
 app = Flask('carros')
@@ -11,17 +11,17 @@ def GetCarros():
 def GetCarro(id):
     for carro in Carros:
         if carro['id'] == id:
-            return carro
-    return f"Carro não encontrado!"
+            return jsonify(carro)
+    return make_response(jsonify(mensagem= "Carro não encontrado!"))
 
 @app.route('/carros', methods=['POST'])
 def PostCarro():
-    data = request.get_json()
+    carroNovo = request.get_json()
     for carro in Carros:
-        if carro['id'] == data['id']:
-            return f"Carro com id {data['id']} já existe!"
-    Carros.append(data)
-    return jsonify(data)
+        if carro['id'] == carroNovo['id']:
+            return make_response(jsonify(mensagem=f"Carro com id {carroNovo['id']} já existe!"))
+    Carros.append(carroNovo)
+    return make_response(jsonify(mensagem= "Carro cadastrado com sucesso!", carro= carroNovo))
 
 @app.route('/carros', methods=['PUT'])
 def PutCarro():
@@ -38,17 +38,17 @@ def PutCarro():
                 if 'modelo' in data:
                     if data['modelo'] != carro['modelo']:
                         carro['modelo'] = data['modelo']
-                return carro
-    return f"Carro não encontrado!"
+                return make_response(jsonify(mensagem= "Carro Atualizado com sucesso!", carro= carro))
+    return make_response(jsonify(mensagem= "Carro não encontrado!"))
 
 @app.route('/carros/<int:id>', methods=['DELETE'])
 def DeleteCarro(id):
     for carro in Carros:
         if carro['id'] == id:
             Carros.remove(carro)
-            return f"Carro com id {id} deletado!"
-    return f"Carro não encontrado!"
+            return make_response(jsonify(mensagem= "Carro deletado com sucesso!", carro= carro))
+    return make_response(jsonify(mensagem= "Carro não encontrado!"))
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5000, host='localhost')
