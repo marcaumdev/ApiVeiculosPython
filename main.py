@@ -27,14 +27,18 @@ def PostCarro():
 def PutCarro():
     data = request.get_json()
     for carro in Carros:
-        if carro['id'] == data['id']:
-            if data['ano'] != carro['ano']:
-                carro['ano'] = data['ano']
-            if data['marca'] != carro['marca']:
-                carro['marca'] = data['marca']
-            if data['modelo'] != carro['modelo']:
-                carro['modelo'] = data['modelo']
-            return carro
+        if 'id' in data:
+            if carro['id'] == data['id']:
+                if 'ano' in data:
+                    if data['ano'] != carro['ano']:
+                        carro['ano'] = data['ano']
+                if 'marca' in data:
+                    if data['marca'] != carro['marca']:
+                        carro['marca'] = data['marca']
+                if 'modelo' in data:
+                    if data['modelo'] != carro['modelo']:
+                        carro['modelo'] = data['modelo']
+                return carro
     return f"Carro não encontrado!"
 
 @app.route('/carros/<int:id>', methods=['DELETE'])
